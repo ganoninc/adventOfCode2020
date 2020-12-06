@@ -24,8 +24,8 @@ def build_populate_groups(formatedText):
 	return groups
 
 
-def get_total_of_yes(populated_groups):
-	total_of_yes = 0
+def get_total_questions_to_which_anyone_answered_yes(populated_groups):
+	total_questions_to_which_anyone_answered_yes = 0
 	for group in populated_groups:
 		yes_count_of_current_group = 0
 		encounted_yes = []
@@ -35,9 +35,31 @@ def get_total_of_yes(populated_groups):
 					yes_count_of_current_group += 1
 					encounted_yes.append(answer)
 		#group['yes_count'] = yes_count_of_current_group
-		total_of_yes += yes_count_of_current_group
+		total_questions_to_which_anyone_answered_yes += yes_count_of_current_group
 	#pp.pprint(populated_groups)
-	return total_of_yes
+	return total_questions_to_which_anyone_answered_yes
+
+
+def get_total_questions_to_which_everyone_answered_yes(populated_groups):
+	total_questions_to_which_everyone_answered_yes = 0
+	for group in populated_groups:
+		yes_count_of_current_group = 0
+		encounted_yes = []
+
+		people_count = len(group['answers_by_people'])
+		answers_count = {}
+
+		for people_answers in group['answers_by_people']:
+			for answer in people_answers:
+				if answer not in answers_count:
+					answers_count[answer] = 0
+				answers_count[answer] += 1
+
+		for answer in answers_count:
+			if answers_count[answer] == people_count:
+				total_questions_to_which_everyone_answered_yes += 1
+
+	return total_questions_to_which_everyone_answered_yes
 
 
 def main():
@@ -48,9 +70,12 @@ def main():
 	# read all lines at once
 	formatedText = file.read()
 	populated_groups = build_populate_groups(formatedText)
-	total_of_yes = get_total_of_yes(populated_groups)
 
-	print('The answer is ' + str(total_of_yes))
+	total_questions_to_which_anyone_answered_yes = get_total_questions_to_which_anyone_answered_yes(populated_groups)
+	print('The answer for part 1. is ' + str(total_questions_to_which_anyone_answered_yes))	
+
+	total_questions_to_which_everyone_answered_yes = get_total_questions_to_which_everyone_answered_yes(populated_groups)
+	print('The answer for part 2. is ' + str(total_questions_to_which_everyone_answered_yes))
 	 
 	# close the file
 	file.close()
